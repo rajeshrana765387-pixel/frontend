@@ -51,7 +51,7 @@ const Login = () => {
   return (
     <div style={{
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      background: 'linear-gradient(rgba(15, 23, 42, 0.78), rgba(67, 56, 202, 0.82)), url("https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=2000&q=80") center center / cover no-repeat fixed',
       padding: '1rem'
     }}>
       <div style={{ width: '100%', maxWidth: '24rem' }}>

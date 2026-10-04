@@ -41,12 +41,14 @@ const Navbar = () => {
 
   return (
     <nav style={{
-      background: 'white',
-      borderBottom: '1px solid #e2e8f0',
+      background: 'rgba(255, 255, 255, 0.92)',
+      backdropFilter: 'blur(10px)',
+      WebkitBackdropFilter: 'blur(10px)',
+      borderBottom: '1px solid rgba(226, 232, 240, 0.8)',
       position: 'sticky',
       top: 0,
       zIndex: 40,
-      boxShadow: '0 1px 3px rgba(0,0,0,0.06)'
+      boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)'
     }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '4rem' }}>
