@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
-import { FiMail, FiLock, FiEye, FiEyeOff, FiUser, FiCheck } from 'react-icons/fi';
+import { FiShoppingBag, FiMail, FiLock, FiEye, FiEyeOff, FiCheck, FiHome } from 'react-icons/fi';
 
-const Login = () => {
+const OwnerLogin = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
@@ -19,7 +19,7 @@ const Login = () => {
 
   const validate = () => {
     const newErrors = {};
-    if (!form.email) newErrors.email = 'Email is required';
+    if (!form.email) newErrors.email = 'Store Owner email is required';
     else if (!/\S+@\S+\.\S+/.test(form.email)) newErrors.email = 'Invalid email address';
     if (!form.password) newErrors.password = 'Password is required';
     return newErrors;
@@ -27,11 +27,11 @@ const Login = () => {
 
   const handleFillDemo = () => {
     setForm({
-      email: 'user@storerating.com',
-      password: 'User@1234',
+      email: 'owner@storerating.com',
+      password: 'Owner@1234',
     });
     setErrors({});
-    toast.success('Customer credentials filled!');
+    toast.success('Store Owner credentials filled!');
   };
 
   const handleSubmit = async (e) => {
@@ -46,12 +46,15 @@ const Login = () => {
     setLoading(true);
     try {
       const user = await login(form.email, form.password);
+      if (user.role !== 'store_owner' && user.role !== 'admin') {
+        toast.error('Notice: This account is a Normal User. Redirecting to store list.');
+        navigate('/stores');
+        return;
+      }
       toast.success(`Welcome back, ${user.name?.split(' ')[0]}!`);
-      if (user.role === 'admin') navigate('/admin/dashboard');
-      else if (user.role === 'store_owner') navigate('/owner/dashboard');
-      else navigate('/stores');
+      navigate('/owner/dashboard');
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || 'Login failed. Please check credentials.';
+      const msg = err.response?.data?.message || err.message || 'Login failed. Please verify credentials.';
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -61,7 +64,7 @@ const Login = () => {
   return (
     <div style={{
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'linear-gradient(rgba(15, 23, 42, 0.78), rgba(67, 56, 202, 0.82)), url("https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=2000&q=80") center center / cover no-repeat fixed',
+      background: 'linear-gradient(rgba(6, 78, 59, 0.85), rgba(15, 23, 42, 0.88)), url("https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=2000&q=80") center center / cover no-repeat fixed',
       padding: '1.5rem'
     }}>
       <div style={{ width: '100%', maxWidth: '26rem' }}>
@@ -71,18 +74,18 @@ const Login = () => {
           padding: '0.35rem', borderRadius: '0.75rem', marginBottom: '1.5rem',
           border: '1px solid rgba(255, 255, 255, 0.12)', backdropFilter: 'blur(10px)'
         }}>
-          <div style={{
-            flex: 1, textAlign: 'center', padding: '0.5rem', fontSize: '0.8rem',
-            background: 'var(--primary)', color: 'white', borderRadius: '0.5rem', fontWeight: '600'
-          }}>
-            👤 User
-          </div>
-          <Link to="/owner/login" style={{
+          <Link to="/login" style={{
             flex: 1, textAlign: 'center', padding: '0.5rem', fontSize: '0.8rem',
             color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', borderRadius: '0.5rem', fontWeight: '500'
           }}>
-            🏪 Store Owner
+            👤 User
           </Link>
+          <div style={{
+            flex: 1, textAlign: 'center', padding: '0.5rem', fontSize: '0.8rem',
+            background: '#059669', color: 'white', borderRadius: '0.5rem', fontWeight: '600'
+          }}>
+            🏪 Store Owner
+          </div>
           <Link to="/admin/login" style={{
             flex: 1, textAlign: 'center', padding: '0.5rem', fontSize: '0.8rem',
             color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', borderRadius: '0.5rem', fontWeight: '500'
@@ -94,23 +97,24 @@ const Login = () => {
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
           <div style={{
-            width: '3.75rem', height: '3.75rem', background: 'white',
+            width: '3.75rem', height: '3.75rem', background: '#065f46',
             borderRadius: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 0.75rem', boxShadow: '0 4px 16px rgba(0,0,0,0.2)'
+            margin: '0 auto 0.75rem', boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+            border: '2px solid rgba(52, 211, 153, 0.4)'
           }}>
-            <span style={{ fontWeight: '800', fontSize: '1.35rem', color: 'var(--primary)' }}>SR</span>
+            <FiShoppingBag style={{ color: '#6ee7b7', fontSize: '1.75rem' }} />
           </div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: '700', color: 'white' }}>Customer Login</h1>
-          <p style={{ color: 'rgba(255,255,255,0.8)', marginTop: '0.25rem', fontSize: '0.875rem' }}>
-            Rate stores & explore community reviews
+          <h1 style={{ fontSize: '1.75rem', fontWeight: '700', color: 'white' }}>Store Owner Portal</h1>
+          <p style={{ color: 'rgba(255,255,255,0.75)', marginTop: '0.25rem', fontSize: '0.875rem' }}>
+            Store analytics, customer ratings & insights
           </p>
         </div>
 
         {/* Card */}
-        <div className="card" style={{ boxShadow: '0 20px 50px rgba(0,0,0,0.25)' }}>
+        <div className="card" style={{ boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div className="form-group">
-              <label className="form-label">Email Address</label>
+              <label className="form-label">Store Owner Email</label>
               <div style={{ position: 'relative' }}>
                 <FiMail style={{
                   position: 'absolute', left: '0.75rem', top: '50%',
@@ -123,7 +127,7 @@ const Login = () => {
                   onChange={handleChange}
                   className={`form-input ${errors.email ? 'error' : ''}`}
                   style={{ paddingLeft: '2.25rem' }}
-                  placeholder="user@storerating.com"
+                  placeholder="owner@storerating.com"
                   autoComplete="email"
                 />
               </div>
@@ -166,18 +170,21 @@ const Login = () => {
               type="submit"
               className="btn btn-primary btn-lg"
               disabled={loading}
-              style={{ width: '100%', justifyContent: 'center', marginTop: '0.5rem' }}
+              style={{
+                width: '100%', justifyContent: 'center', marginTop: '0.5rem',
+                backgroundColor: '#059669', borderColor: '#059669'
+              }}
             >
-              {loading ? 'Signing in...' : 'Sign In as Customer'}
+              {loading ? 'Authenticating...' : 'Sign In as Store Owner'}
             </button>
           </form>
 
           {/* Quick Demo Fill */}
           <div style={{
-            marginTop: '1.25rem', padding: '0.875rem', background: '#eff6ff',
-            borderRadius: '0.625rem', border: '1px dashed #bfdbfe', textAlign: 'center'
+            marginTop: '1.25rem', padding: '0.875rem', background: '#f0fdf4',
+            borderRadius: '0.625rem', border: '1px dashed #86efac', textAlign: 'center'
           }}>
-            <p style={{ fontSize: '0.75rem', color: '#1d4ed8', marginBottom: '0.5rem', fontWeight: '500' }}>
+            <p style={{ fontSize: '0.75rem', color: '#166534', marginBottom: '0.5rem', fontWeight: '500' }}>
               🔑 Quick Test Credentials
             </p>
             <button
@@ -186,20 +193,19 @@ const Login = () => {
               className="btn btn-secondary btn-sm"
               style={{ width: '100%', justifyContent: 'center', fontSize: '0.8rem', background: 'white' }}
             >
-              <FiCheck style={{ color: 'var(--primary)' }} /> Auto-fill Customer Login
+              <FiCheck style={{ color: '#059669' }} /> Auto-fill Store Owner Login
             </button>
           </div>
+        </div>
 
-          <div style={{ textAlign: 'center', marginTop: '1.25rem', fontSize: '0.875rem', color: 'var(--gray-600)' }}>
-            Don't have an account?{' '}
-            <Link to="/register" style={{ color: 'var(--primary)', fontWeight: '600', textDecoration: 'none' }}>
-              Create an account
-            </Link>
-          </div>
+        <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
+          <Link to="/login" style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.85rem', textDecoration: 'none' }}>
+            ← Back to Normal User Login
+          </Link>
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default OwnerLogin;
